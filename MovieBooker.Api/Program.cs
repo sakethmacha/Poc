@@ -30,6 +30,8 @@ namespace MovieBooker.Api
             builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<IShowTimeRepository, ShowTimeRepository>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+            builder.Services.AddScoped<ISeatService, SeatService>();
 
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<IShowTimeService, ShowTimeService>();

@@ -12,75 +12,86 @@ namespace MovieBooker.Infrastructure.Repositories
         {
             DbContext = context;
         }
-
-        //public async Task<Booking> BookAsync(Booking booking)
-        //{
-        //    using var tx = await DbContext.Database.BeginTransactionAsync();
-
-        //    var seat = await DbContext.Seats
-        //        .FirstAsync(s => s.SeatNumber == booking.SeatNumber && !s.IsBooked);
-
-        //    seat.IsBooked = true;
-
-        //    DbContext.Bookings.Add(booking);
-        //    await DbContext.SaveChangesAsync();
-
-        //    // EXPLICITLY LOAD NAVIGATION DATA
-        //    await DbContext.Entry(booking)
-        //        .Reference(b => b.ShowTime)
-        //        .LoadAsync();
-
-        //    await DbContext.Entry(booking.ShowTime)
-        //        .Reference(st => st.Movie)
-        //        .LoadAsync();
-
-        //    await tx.CommitAsync();
-
-        //    return booking;
-        //}
-        public async Task<Booking> BookAsync(Booking booking)
+        public async Task<Booking> BookAsync(Booking booking, List<int> seatIds)
         {
             using var tx = await DbContext.Database.BeginTransactionAsync();
 
-            var seat = await DbContext.Seats
-                .FirstAsync(s => s.SeatNumber == booking.SeatNumber && !s.IsBooked);
+            // 1️⃣ Fetch seats
+            var seats = await DbContext.Seats
+                .Where(s => seatIds.Contains(s.Id))
+                .ToListAsync();
 
-            seat.IsBooked = true;
+            // 2️⃣ Validate availability
+            if (seats.Any(s => s.IsBooked))
+                throw new Exception("One or more seats already booked.");
 
+            // 3️⃣ Mark seats as booked
+            foreach (var seat in seats)
+                seat.IsBooked = true;
+
+            // 4️⃣ Save booking
             DbContext.Bookings.Add(booking);
             await DbContext.SaveChangesAsync();
 
-            //  RELOAD WITH NAVIGATION PROPERTIES
-            var fullBooking = await DbContext.Bookings
-                .Include(b => b.ShowTime)
-                .ThenInclude(st => st.Movie)
-                .FirstAsync(b => b.Id == booking.Id);
+            // 5️⃣ Create BookingSeats
+            foreach (var seat in seats)
+            {
+                DbContext.BookingSeats.Add(new BookingSeat
+                {
+                    BookingId = booking.Id,
+                    SeatId = seat.Id
+                });
+            }
 
+            await DbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return fullBooking;
+            // 6️⃣ Reload with navigation data
+            return await DbContext.Bookings
+                .Include(b => b.ShowTime)
+                .ThenInclude(st => st.Movie)
+                .Include(b => b.BookingSeats)
+                .ThenInclude(bs => bs.Seat)
+                .FirstAsync(b => b.Id == booking.Id);
         }
+
 
 
         public async Task<Booking?> GetAsync(int id)
-            => await DbContext.Bookings
+        {
+            return await DbContext.Bookings
                 .Include(b => b.ShowTime)
-                .ThenInclude(st => st.Movie)
+                    .ThenInclude(st => st.Movie)
+                .Include(b => b.BookingSeats)
+                    .ThenInclude(bs => bs.Seat)
                 .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
 
         public async Task CancelAsync(int id)
         {
-            var booking = await DbContext.Bookings.FindAsync(id);
-            if (booking == null) return;
+            using var tx = await DbContext.Database.BeginTransactionAsync();
 
+            var booking = await DbContext.Bookings
+                .Include(b => b.BookingSeats)
+                .ThenInclude(bs => bs.Seat)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (booking == null || booking.IsCancelled)
+                return;
+
+            // 1️⃣ Mark booking as cancelled
             booking.IsCancelled = true;
 
-            var seat = await DbContext.Seats
-                .FirstAsync(s => s.SeatNumber == booking.SeatNumber);
-
-            seat.IsBooked = false;
+            // 2️⃣ Release all seats
+            foreach (var bookingSeat in booking.BookingSeats)
+            {
+                bookingSeat.Seat.IsBooked = false;
+            }
 
             await DbContext.SaveChangesAsync();
+            await tx.CommitAsync();
         }
+
     }
 }

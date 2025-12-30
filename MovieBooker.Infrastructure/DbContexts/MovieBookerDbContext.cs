@@ -15,6 +15,8 @@ public class MovieBookerDbContext : DbContext
     public DbSet<ShowTime> ShowTimes { get; set; }
     public DbSet<Seat> Seats { get; set; }
     public DbSet<Booking> Bookings { get; set; }
+    public DbSet<BookingSeat> BookingSeats { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -8,8 +8,9 @@ public class Booking
     public ShowTime ShowTime { get; set; }
 
     public string CustomerName { get; set; } = string.Empty;
-    public string SeatNumber { get; set; } = string.Empty;
-
-    public bool IsCancelled { get; set; }
     public DateTime BookedAt { get; set; }
+    public bool IsCancelled { get; set; }
+
+    public ICollection<BookingSeat> BookingSeats { get; set; }
+        = new List<BookingSeat>();
 }

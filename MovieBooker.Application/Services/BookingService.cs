@@ -20,19 +20,21 @@ namespace MovieBooker.Application.Services
             {
                 ShowTimeId = dto.ShowTimeId,
                 CustomerName = dto.CustomerName,
-                SeatNumber = dto.SeatNumber,
                 BookedAt = DateTime.UtcNow
             };
 
-            var result = await BookingRepository.BookAsync(booking);
+            var result = await BookingRepository.BookAsync(booking, dto.SeatIds);
 
             return new BookingDto
             {
                 Id = result.Id,
                 Movie = result.ShowTime.Movie.Title,
-                Seat = result.SeatNumber
+                Seats = result.BookingSeats
+                    .Select(bs => bs.Seat.SeatNumber)
+                    .ToList()
             };
         }
+
 
         public async Task<BookingDto?> GetAsync(int id)
         {
@@ -43,10 +45,16 @@ namespace MovieBooker.Application.Services
             {
                 Id = b.Id,
                 Movie = b.ShowTime.Movie.Title,
-                Seat = b.SeatNumber,
+
+                // ✅ MULTIPLE SEATS
+                Seats = b.BookingSeats
+                    .Select(bs => bs.Seat.SeatNumber)
+                    .ToList(),
+
                 IsCancelled = b.IsCancelled
             };
         }
+
 
         public Task CancelAsync(int id) => BookingRepository.CancelAsync(id);
     }
