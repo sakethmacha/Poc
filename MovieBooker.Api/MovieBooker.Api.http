@@ -1,0 +1,6 @@
+@MovieBooker.Api_HostAddress = http://localhost:5049
+
+GET {{MovieBooker.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

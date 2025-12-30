@@ -1,0 +1,17 @@
+﻿@model List<MovieBooker.Application.DTOs.MovieDto>
+
+<h2>🎬 Now Showing</h2>
+
+@foreach (var movie in Model)
+{
+    <div style="border:1px solid #ccc; padding:12px; margin-bottom:10px">
+
+        <!-- CLICKING MOVIE TITLE -->
+        <a href="/ShowTimes/Index?movieId=@movie.Id"
+           style="text-decoration:none; color:black">
+            <h3>@movie.Title</h3>
+        </a>
+
+        <small>Tap movie to see showtimes</small>
+    </div>
+}

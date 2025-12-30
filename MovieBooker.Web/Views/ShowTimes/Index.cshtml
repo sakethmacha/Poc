@@ -1,0 +1,22 @@
+﻿@model List<MovieBooker.Application.DTOs.ShowTimeDto>
+
+<h2>🎭 Show Times</h2>
+
+@if (!Model.Any())
+{
+    <p>No showtimes available for this movie.</p>
+}
+else
+{
+    @foreach (var show in Model)
+    {
+        <div style="border-bottom:1px solid #ddd; padding:10px 0">
+            <strong>@show.Cinema</strong> — @show.Screen
+            <br />
+
+            <a href="/Bookings/Create?showTimeId=@show.ShowTimeId">
+                ⏰ @show.Time.ToString("hh:mm tt")
+            </a>
+        </div>
+    }
+}

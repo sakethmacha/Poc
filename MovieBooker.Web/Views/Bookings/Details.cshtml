@@ -1,0 +1,12 @@
+﻿@model MovieBooker.Application.DTOs.BookingDto
+
+<h2>✅ Booking Confirmed</h2>
+
+<p><strong>Movie:</strong> @Model.Movie</p>
+<p><strong>Seat:</strong> @Model.Seat</p>
+<p><strong>Status:</strong> @(Model.IsCancelled ? "Cancelled" : "Confirmed")</p>
+
+@if (!Model.IsCancelled)
+{
+    <a href="/Bookings/Cancel/@Model.Id">❌ Cancel Ticket</a>
+}
