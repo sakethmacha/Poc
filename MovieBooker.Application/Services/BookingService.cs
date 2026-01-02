@@ -14,16 +14,16 @@ namespace MovieBooker.Application.Services
             BookingRepository = bookingRepository;
         }
 
-        public async Task<BookingDto> BookAsync(CreateBookingDto dto)
+        public async Task<BookingDto> BookAsync(CreateBookingDto createBookingDto)
         {
             var booking = new Booking
             {
-                ShowTimeId = dto.ShowTimeId,
-                CustomerName = dto.CustomerName,
+                ShowTimeId = createBookingDto.ShowTimeId,
+                CustomerName = createBookingDto.CustomerName,
                 BookedAt = DateTime.UtcNow
             };
 
-            var result = await BookingRepository.BookAsync(booking, dto.SeatIds);
+            var result = await BookingRepository.BookAsync(booking, createBookingDto.SeatIds);
 
             return new BookingDto
             {

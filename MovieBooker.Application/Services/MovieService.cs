@@ -8,9 +8,9 @@ namespace MovieBooker.Application.Services
     {
         private readonly IMovieRepository MovieRepository;
 
-        public MovieService(IMovieRepository repo)
+        public MovieService(IMovieRepository movieRepository)
         {
-            MovieRepository = repo;
+            MovieRepository = movieRepository;
         }
 
         public async Task<List<MovieDto>> GetMoviesAsync()

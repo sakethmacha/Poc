@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  api:
+    image: moviebooker:latest
+    container_name: moviebooker_api
+    ports:
+      - "9000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__Constr: >
+        Server=${DB_SERVER};
+        Database=${DB_NAME};
+        User Id=${DB_USER};
+        Password=${DB_PASSWORD};
+        TrustServerCertificate=True
