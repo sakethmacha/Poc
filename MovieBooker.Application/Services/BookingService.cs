@@ -46,7 +46,6 @@ namespace MovieBooker.Application.Services
                 Id = b.Id,
                 Movie = b.ShowTime.Movie.Title,
 
-                // ✅ MULTIPLE SEATS
                 Seats = b.BookingSeats
                     .Select(bs => bs.Seat.SeatNumber)
                     .ToList(),

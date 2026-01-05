@@ -13,9 +13,7 @@ namespace MovieBooker.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -25,19 +23,16 @@ namespace MovieBooker.Api
                                             builder.Configuration.GetConnectionString("Constr")
                                         )
                                     );
-
-            // 🔹 Dependency Injection
-            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+            // Dependency Injection
             builder.Services.AddScoped<IShowTimeRepository, ShowTimeRepository>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IMovieRepository, MovieRepository>();
             builder.Services.AddScoped<ISeatRepository, SeatRepository>();
             builder.Services.AddScoped<ISeatService, SeatService>();
-
             builder.Services.AddScoped<IMovieService, MovieService>();
-            builder.Services.AddScoped<IShowTimeService, ShowTimeService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IShowTimeService, ShowTimeService>();
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{
@@ -47,12 +42,8 @@ namespace MovieBooker.Api
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }

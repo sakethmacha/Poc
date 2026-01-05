@@ -20,7 +20,7 @@ namespace MovieBooker.Application.Services
             return list.Select(s => new ShowTimeDto
             {
                 ShowTimeId = s.Id,
-                Cinema = s.Screen.Cinema.Name,
+                Cinema = s.Screen.Cinema!.Name,
                 Screen = s.Screen.Name,
                 Time = s.StartTime
             }).ToList();

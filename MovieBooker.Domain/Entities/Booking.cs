@@ -5,7 +5,7 @@ public class Booking
     public int Id { get; set; }
 
     public int ShowTimeId { get; set; }
-    public ShowTime ShowTime { get; set; }
+    public ShowTime? ShowTime { get; set; }
 
     public string CustomerName { get; set; } = string.Empty;
     public DateTime BookedAt { get; set; }
